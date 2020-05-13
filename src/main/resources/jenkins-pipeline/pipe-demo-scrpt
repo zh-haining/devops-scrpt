@@ -42,7 +42,7 @@ pipeline {
          always {
             emailext(
                subject: '构建通知:${PROJECT_NAME} - Build # ${BUILD_NUMBER} - ${BUILD_STATUS}!',
-               body: '${FILE,path="src/main/resources/jenkins-pipeline/email.html"}',
+               body: '${FILE,path="/var/lib/jenkins/workspace/config/email.html"}',
                to: 'zhaohaining1@100tal.com,1292735736@qq.com'
             )
          }
