@@ -15,7 +15,16 @@ pipeline {
             sh 'mvn clean package -Dmaven.test.skip=true'
          }
       }
-
+       stage('code check sonar') {
+           steps{
+              script {
+                   scannerHome = tool 'sonar-scanner'
+              }
+              withSonarQubeEnv('sonar-scanner') {
+                  sh "${scannerHome}/bin/sonar-scanner"
+              }
+           }
+      }
       stage('publish code') {
            steps {
               withCredentials([usernamePassword(credentialsId: '54a93f58-f819-4d74-b2a5-21c18100f0cb', passwordVariable: 'password', usernameVariable: 'username')]) {
