@@ -16,21 +16,6 @@ pipeline {
          }
       }
 
-      stage('build project') {
-           steps {
-              sh 'scp '
-              script {
-                    def remote = [:]
-                    remote.name = '01-130'
-                    remote.host = '192.168.221.130'
-                    remote.user = 'root'
-                    remote.password = 'root'
-                    remote.allowAnyHosts = true
-                    sshCommand remote: remote, command: "ls -lrt"
-              }
-           }
-      }
-
       stage('publish code') {
            steps {
               withCredentials([usernamePassword(credentialsId: '54a93f58-f819-4d74-b2a5-21c18100f0cb', passwordVariable: 'password', usernameVariable: 'username')]) {
