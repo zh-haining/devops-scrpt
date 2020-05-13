@@ -1,6 +1,9 @@
 pipeline {
    agent any
-   properties([[$class: 'JiraProjectProperty'], parameters([string(defaultValue: 'master', description: '分支名称', name: 'branch_name', trim: true), choice(choices: ['test-9091', 'test9092', 'pre-9080'], description: '环境', name: 'env-type')])])
+   parameters {
+      string(defaultValue: 'master', description: '分支名称', name: 'branch_name', trim: true)
+      choice(choices: ['test-9091', 'test9092', 'pre-9080'], description: '环境', name: 'env-type')
+   }
    stages {
       stage('pull code') {
          steps {
@@ -28,7 +31,7 @@ pipeline {
            }
       }
 
-      stage('excute remote cmd') {
+      stage('publish code') {
            steps {
               withCredentials([usernamePassword(credentialsId: '54a93f58-f819-4d74-b2a5-21c18100f0cb', passwordVariable: 'password', usernameVariable: 'username')]) {
                 script {
