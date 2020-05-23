@@ -1,12 +1,24 @@
 pipeline {
    agent any
+   environment {
+       a_git_url = "https://github.com/zh-haining/jenkins-demo.git"
+       b_git_url = "https://github.com/zh-haining/jenkins-demo.git"
+       c_git_url = "https://github.com/zh-haining/jenkins-demo.git"
+   }
    parameters {
-      choice(choices: ['dev','test-9091', 'test9092', 'pre-9080','prod'], description: '选择环境', name: 'env_type')
-
-      string(defaultValue: 'master', description: '分支名称', name: 'branch_name', trim: true)
-
+       choice(choices: ['dev','test-9091', 'test9092', 'pre-9080','prod'], description: '选择环境', name: 'envType')
+       choice(choices: ['串行','并行'], description: '串行发布还是并行发布', name: 'pubType')
+       string defaultValue: 'master', description: '项目A的分支', name: 'a_branch', trim: true
+       string defaultValue: 'master', description: '项目B的分支', name: 'b_branch', trim: true
+       string defaultValue: 'master', description: '项目C的分支', name: 'c_branch', trim: true
    }
    stages {
+      stage('初始化') {
+        steps{
+          echo " envType: ${envType} | pubType: ${pubType} | a_branch: ${a_branch}| b_branch: ${b_branch}| c_branch: ${c_branch}"
+          echo "a_git_url:${env.a_git_url} | b_git_url: ${env.b_git_url} | c_git_url: ${env.c_git_url}"
+        }
+      }
       stage('拉取代码') {
             parallel {
                 stage('拉取项目A的代码') {
@@ -40,14 +52,49 @@ pipeline {
                 echo "编译构建完毕!"
           }
       }
-       stage('集群发布') {
-           steps{
-               input message: '请选择发布主机', parameters: [choice(choices: ['串行', '并行'], description: '串行执行还是并行执行', name: '串行发布还是并行发布'), extendedChoice(defaultValue: '192.168.0.1', description: '主机列表', descriptionPropertyValue: 'abcd', multiSelectDelimiter: ',', name: 'hostLists', quoteValue: true, saveJSONParameterToFile: false, type: 'PT_MULTI_SELECT', value: '192.168.0.1,192.168.0.2,192.168.0.3,192.168.0.4,192.168.0.5', visibleItemCount: 5)], submitterParameter: 'hostLists'
-               echo "集群发布开始..."
-               sleep 2
-               echo "集群发布完毕!"
+       stage('集群串行发布') {
+           when {
+             equals expected: '串行',
+             actual: "${pubType}"
            }
-      }
+           steps{
+               echo "pub 192.168.1.100"
+               sleep 5
+
+               echo "pub 192.168.1.101"
+               sleep 2
+
+               echo "pub 192.168.1.102"
+               sleep 3
+           }
+     }
+
+     stage('集群并行发布') {
+           when {
+             equals expected: '并行',
+             actual: "${pubType}"
+           }
+           parallel {
+               stage('pub 192.168.1.100') {
+                   steps {
+                       echo "pub 192.168.1.100"
+                       sleep 3
+                   }
+               }
+               stage('pub 192.168.1.101') {
+                   steps {
+                       echo "pub 192.168.1.101"
+                       sleep 5
+                   }
+               }
+               stage('pub 192.168.1.102') {
+                   steps {
+                       echo "pub 192.168.1.102"
+                       sleep 2
+                   }
+               }
+           }
+     }
       stage('通知') {
            steps {
                echo "通知完成"
