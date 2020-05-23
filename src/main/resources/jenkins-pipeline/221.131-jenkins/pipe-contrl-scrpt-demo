@@ -1,7 +1,7 @@
 pipeline {
    agent any
    parameters {
-      choice(choices: ['dev',''test-9091', 'test9092', 'pre-9080','prod'], description: '选择环境', name: 'env_type')
+      choice(choices: ['dev','test-9091', 'test9092', 'pre-9080','prod'], description: '选择环境', name: 'env_type')
 
       string(defaultValue: 'master', description: '分支名称', name: 'branch_name', trim: true)
 
