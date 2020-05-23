@@ -52,6 +52,18 @@ pipeline {
                 echo "编译构建完毕!"
           }
       }
+      stage('发布第一台服务器') {
+            steps{
+                  echo "发布192.168.100开始..."
+                  sleep 5
+                  echo "发布192.168.100完毕!"
+            }
+       }
+       stage('信息确认') {
+           steps{
+             input message: '确认没有问题要继续发布后续服务器吗？', ok: '继续'
+           }
+       }
        stage('集群串行发布') {
            when {
              equals expected: '串行',
