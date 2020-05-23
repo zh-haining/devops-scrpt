@@ -5,7 +5,7 @@ pipeline {
 
       string(defaultValue: 'master', description: '分支名称', name: 'branch_name', trim: true)
 
-      }
+   }
    stages {
       stage('拉取代码') {
             parallel {
@@ -42,6 +42,9 @@ pipeline {
       }
        stage('集群发布') {
            steps{
+
+               input message: '是否一键发布所有主机', ok: '是', parameters: [booleanParam(defaultValue: false, description: '请选择发布方式', name: 'isAll')], submitterParameter: 'isAll'
+
                echo "集群发布开始..."
                sleep 2
                echo "集群发布完毕!"
