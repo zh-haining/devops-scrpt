@@ -43,8 +43,7 @@ pipeline {
        stage('集群发布') {
            steps{
 
-               input message: '是否一键发布所有主机', ok: '是', parameters: [booleanParam(defaultValue: false, description: '请选择发布方式', name: 'isAll')], submitterParameter: 'isAll'
-
+               input message: '请选择发布主机', parameters: [choice(choices: ['192.168.1.100', '192.168.1.101', '192.168.1.102', '192.168.1.103', '192.168.1.104'], description: '请选择主机列表', name: 'hostList'), choice(choices: ['串行'], description: '并行', name: '串行发布还是并行发布')], submitterParameter: 'selectHosts'
                echo "集群发布开始..."
                sleep 2
                echo "集群发布完毕!"
