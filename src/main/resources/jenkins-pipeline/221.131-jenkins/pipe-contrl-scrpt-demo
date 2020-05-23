@@ -1,0 +1,56 @@
+pipeline {
+   agent any
+   parameters {
+      choice(choices: ['dev',''test-9091', 'test9092', 'pre-9080','prod'], description: '选择环境', name: 'env_type')
+
+      string(defaultValue: 'master', description: '分支名称', name: 'branch_name', trim: true)
+
+      }
+   stages {
+      stage('拉取代码') {
+            parallel {
+                stage('拉取项目A的代码') {
+                    steps {
+                        echo "正在拉取项目A的代码"
+                        sleep 5
+                        echo "项目A代码拉取完毕"
+                    }
+                }
+                stage('拉取项目B的代码') {
+                    steps {
+                        echo "正在拉取项目B的代码"
+                        sleep 8
+                        echo "项目B代码拉取完毕"
+                    }
+                }
+                stage('拉取项目C的代码') {
+                    steps {
+                        echo "正在拉取项目B的代码"
+                        sleep 3
+                        echo "项目C代码拉取完毕"
+                    }
+                }
+            }
+
+      }
+      stage('编译构建') {
+          steps{
+                echo "编译构建开始..."
+                sleep 5
+                echo "编译构建完毕!"
+          }
+      }
+       stage('集群发布') {
+           steps{
+               echo "集群发布开始..."
+               sleep 2
+               echo "集群发布完毕!"
+           }
+      }
+      stage('通知') {
+           steps {
+               echo "通知完成"
+          }
+       }
+   }
+}
