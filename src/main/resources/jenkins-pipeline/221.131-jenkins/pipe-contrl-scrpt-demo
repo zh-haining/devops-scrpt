@@ -42,8 +42,7 @@ pipeline {
       }
        stage('集群发布') {
            steps{
-
-               input message: '请选择发布主机', parameters: [choice(choices: ['192.168.1.100', '192.168.1.101', '192.168.1.102', '192.168.1.103', '192.168.1.104'], description: '请选择主机列表', name: 'hostList'), choice(choices: ['串行'], description: '并行', name: '串行发布还是并行发布')], submitterParameter: 'selectHosts'
+               input message: '请选择发布主机', parameters: [choice(choices: ['串行', '并行'], description: '串行执行还是并行执行', name: '串行发布还是并行发布'), extendedChoice(defaultValue: '192.168.0.1', description: '主机列表', descriptionPropertyValue: 'abcd', multiSelectDelimiter: ',', name: 'hostLists', quoteValue: true, saveJSONParameterToFile: false, type: 'PT_MULTI_SELECT', value: '192.168.0.1,192.168.0.2,192.168.0.3,192.168.0.4,192.168.0.5', visibleItemCount: 5)], submitterParameter: 'hostLists'
                echo "集群发布开始..."
                sleep 2
                echo "集群发布完毕!"
